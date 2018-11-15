@@ -2,7 +2,7 @@ r = 5; %radius of circle
 figure('Position', [100,100,600,500])
 
 
-for q = 1:1000 
+while true
     
     
     for i = 1:length(particleList)
