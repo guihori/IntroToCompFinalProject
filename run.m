@@ -1,4 +1,4 @@
-r = 5; %radius of circle
+
 figure('Position', [100,100,600,500])
 
 
@@ -31,6 +31,16 @@ while true
     %draw particle
     for i = 1:length(particleList)
         circle(particleList(i).xPos,particleList(i).yPos,r)
+    end
+    
+    %Test for collision of all combos of particles 
+
+   if(length(particleList)>1)
+        for i = 1:length(particleList)-1
+            for j =i+1:length(particleList)
+                collisionTest(particleList(i),particleList(j));
+            end
+        end
     end
     
     drawnow
