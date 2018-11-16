@@ -4,10 +4,25 @@ The purpose of this projcect is to simulate particles and elastic collisions in 
 
 Currently this program is able to display the particles and move them. Collision between particles is not implemented.
 
+---------------------------------------------------------------------------------------------------------------------
+=====================================================================================================================
+---------------------------------------------------------------------------------------------------------------------
+
+goal list
+- [x] Create structures for particles
+- [x] Display the particles through a plot
+- [x] Update particles through an update method
+- [x] Create bounds for our field
+- [ ] Implement physics for the collision between two particles
+- [ ] Create a full GUI for the simulation
+- [ ] Create one click button to create new particles
 
 
 
 
+---------------------------------------------------------------------------------------------------------------------
+=====================================================================================================================
+---------------------------------------------------------------------------------------------------------------------
 
 Explanation on how to find time for two distinct particles to hit each other. Each particle has properties: x and y position, speed, andgle(degrees), and radius
 
