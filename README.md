@@ -1,5 +1,10 @@
 # IntroToCompFinalProject
 
+The purpose of this projcect is to simulate particles and elastic collisions in a 2D environment.
+
+Currently this program is able to display the particles and move them. Collision between particles is not implemented.
+
+
 
 
 
