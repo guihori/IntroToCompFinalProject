@@ -25,6 +25,8 @@ goal list
 
 Explanation on how to find time for two distinct particles to hit each other. Each particle has properties: x and y position, speed, andgle(degrees), and radius
 
+-
+
 currentparticle1:	x1(Known)	y1(Known)	s1(Known)	a1(Known)	r1(Known)
 
 currentparticle2:	x2(Known)	y2(Known)	s2(Known)	a2(Known)	r2(Known)
@@ -35,12 +37,12 @@ finalparticle2:		Fx2(Unknown)	Fy2(Unknown)
 
 time:			t(Unknown)
 
-
+-
 
 hit happens at
 sqrt( (Fx1-Fx2)^2 + (Fy1-Fy2)^2 ) = r1 + r2
 
-
+-
 
 final pos
 x1 + cos(a1) * s1 * t = Fx1
@@ -51,7 +53,7 @@ x2 + cos(a2) * s2 * t = Fx2
 
 y2 + sin(a2) * s2 * t = Fy2
 
-
+-
 
 replacing
 sqrt( ( x1 + cos(a1) * s1 * t - (x2 + cos(a2) * s2 * t) )^2 + (y1 + sin(a1) * s1 * t - (y2 + sin(a2) * s2 * t) )^2 ) = r1 + r2
