@@ -36,14 +36,22 @@ finalparticle2:		Fx2(Unknown)	Fy2(Unknown)
 time:			t(Unknown)
 
 
+
 hit happens at
 sqrt( (Fx1-Fx2)^2 + (Fy1-Fy2)^2 ) = r1 + r2
 
+
+
 final pos
 x1 + cos(a1) * s1 * t = Fx1
+
 y1 + sin(a1) * s1 * t = Fy1
+
 x2 + cos(a2) * s2 * t = Fx2
+
 y2 + sin(a2) * s2 * t = Fy2
+
+
 
 replacing
 sqrt( ( x1 + cos(a1) * s1 * t - (x2 + cos(a2) * s2 * t) )^2 + (y1 + sin(a1) * s1 * t - (y2 + sin(a2) * s2 * t) )^2 ) = r1 + r2
