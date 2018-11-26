@@ -13,7 +13,7 @@ goal list
 - [x] Display the particles through a plot
 - [x] Update particles through an update method
 - [x] Create bounds for our field
-- [ ] Implement physics for the collision between two particles
+- [x] Implement physics for the collision between two particles
 - [ ] Create a full GUI for the simulation
 - [ ] Create one click button to create new particles
 
@@ -26,9 +26,13 @@ goal list
 Explanation on how to find time for two distinct particles to hit each other. Each particle has properties: x and y position, speed, andgle(degrees), and radius
 
 currentparticle1:	x1(Known)	y1(Known)	s1(Known)	a1(Known)	r1(Known)
+
 currentparticle2:	x2(Known)	y2(Known)	s2(Known)	a2(Known)	r2(Known)
+
 finalparticle1:		Fx1(Unknown)	Fy1(Unknown)
+
 finalparticle2:		Fx2(Unknown)	Fy2(Unknown)
+
 time:			t(Unknown)
 
 
