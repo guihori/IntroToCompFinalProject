@@ -37,13 +37,13 @@ elseif strcmp(typeOfCollision,"particleWall")
     time = 1;
     
     %time to hit left wall. x = 0
-    time1 = -particle1.xPos / (cos(particle1.angle) * particle1.speed);
+    time1 = (particle.radius - particle1.xPos) / (cos(particle1.angle) * particle1.speed);
     %time to hit right wall. x = 100
-    time2 = (100 - particle1.xPos) / (cos(particle1.angle) * particle1.speed);
+    time2 = (100 - particle.radius - particle1.xPos) / (cos(particle1.angle) * particle1.speed);
     %time to hit bottom wall. y = 0
-    time3 = -particle1.yPos / (sin(particle1.angle) * particle1.speed);
+    time3 = (particle.radius - particle1.yPos) / (sin(particle1.angle) * particle1.speed);
     %time to hit top wall. y = 100
-    time4 = (100 - particle1.yPos) / (sin(particle1.angle) * particle1.speed);
+    time4 = (100 - particle.radius - particle1.yPos) / (sin(particle1.angle) * particle1.speed);
     
     if time1 >= 0 && time1 < 1
         time = time1;
