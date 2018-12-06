@@ -31,23 +31,28 @@ while true
         particleList(i) = particleUpdate(particleList(i),nextTimeStep);
     end
     
-    totalTimeElapsed = totalTimeElapsed + nextTimeStep,
+    totalTimeElapsed = totalTimeElapsed + nextTimeStep;
     nextTimeStep = 1;
 
     %clear canvas
     %clf
 
     %temporary solution to fix the window size
-    plot([-5,105],[-5,105]);
-
+    
+    toPlotX = zeros(length(particleList),101);
+    toPlotY = toPlotX;
     %draw particle
     for i = 1:length(particleList)
-        circle(particleList(i).xPos,particleList(i).yPos,particleList(i).radius);
+        [toPlotX(i,:),toPlotY(i,:)] = circle(particleList(i).xPos,particleList(i).yPos,particleList(i).radius);
     end
+    
+    
+    plot([-5,105],[-5,105], toPlotX', toPlotY');
+
 
     %Test for collision of all combinations of particles 
 
-   if(length(particleList)>1)
+    if(length(particleList)>1)
         for i = 1:length(particleList)-1
             for j =i+1:length(particleList)
                 [particleList(i), particleList(j)] = collisionTest(particleList(i),particleList(j));
@@ -63,7 +68,8 @@ while true
                     nextTimeStep = tTCol;
             end
         end
-   end
+    end
     
+   
     drawnow
 end
