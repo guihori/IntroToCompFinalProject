@@ -1,4 +1,4 @@
-function [time,boolWithinASecond] = timeToCollision (particle1,particle2,typeOfCollision)
+function [time,boolWithinASecond] = timeToCollision (particle1,particle2,typeOfCollision,lower,upper)
 %finds time to collision and outputs a boolean if time is smaller than one
 %and real.
 if strcmp(typeOfCollision, "particleParticle")
@@ -37,24 +37,24 @@ elseif strcmp(typeOfCollision,"particleWall")
     time = 1;
     
     %time to hit left wall. x = 0
-    time1 = (particle.radius - particle1.xPos) / (cos(particle1.angle) * particle1.speed);
+    time1 = (lower + particle1.radius - particle1.xPos) / (cosd(particle1.angle) * particle1.speed);
     %time to hit right wall. x = 100
-    time2 = (100 - particle.radius - particle1.xPos) / (cos(particle1.angle) * particle1.speed);
+    time2 = (upper - particle1.radius - particle1.xPos) / (cosd(particle1.angle) * particle1.speed);
     %time to hit bottom wall. y = 0
-    time3 = (particle.radius - particle1.yPos) / (sin(particle1.angle) * particle1.speed);
+    time3 = (lower +particle1.radius - particle1.yPos) / (sind(particle1.angle) * particle1.speed);
     %time to hit top wall. y = 100
-    time4 = (100 - particle.radius - particle1.yPos) / (sin(particle1.angle) * particle1.speed);
+    time4 = (upper - particle1.radius - particle1.yPos) / (sind(particle1.angle) * particle1.speed);
     
-    if time1 >= 0 && time1 < 1
+    if time1 > 0 && time1 < 1
         time = time1;
     end
-    if time2 >= 0 && time2 < 1 && time2 < time
+    if time2 > 0 && time2 < 1 && time2 < time
         time = time2;
     end
-    if time3 >= 0 && time3 < 1 && time3 < time
+    if time3 > 0 && time3 < 1 && time3 < time
         time = time3;
     end
-    if time4 >= 0 && time4 < 1 && time4 < time
+    if time4 > 0 && time4 < 1 && time4 < time
         time = time4;
     end
     
