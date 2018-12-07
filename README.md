@@ -14,8 +14,8 @@ goal list
 - [x] Update particles through an update method
 - [x] Create bounds for our field
 - [x] Implement physics for the collision between two particles
-- [ ] Create a full GUI for the simulation
-- [ ] Create one click button to create new particles
+- [x] Create a full GUI for the simulation
+- [x] Create one click button to create new particles
 
 
 
