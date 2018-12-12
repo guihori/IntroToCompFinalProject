@@ -70,8 +70,8 @@ axis equal;
 %Creates a variable called handles.particleList to store all the particles.
 handles.particleList = createParticle(0,0,0,0,0,0);
 handles.nextTimeStep = 1;
-handles.lower = 0.5;
-handles.upper = 99.5;
+handles.lower = 2;
+handles.upper = 98;
 guidata(hObject, handles);
 
 
