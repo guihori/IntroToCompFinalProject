@@ -1,108 +1,110 @@
 function [finalParticle1, finalParticle2] = collision(particle1, particle2)
 
-%All variables to be used in the following equations are assigned from the input structures.
+%The output structures are assigned the same properties as the input
+%structures in order to preserve any properties of the particles unaffected
+%by the collision, such as mass and radius.
 finalParticle1 = particle1;
 finalParticle2 = particle2;
 
+%The mass of each particle is assigned to a variable with a simpler name in
+%order to keep later calculations simple and easy to understand.
 m1 = particle1.mass;
 m2 = particle2.mass;
 
-v1 = particle1.speed;
-v2 = particle2.speed;
+%The velocities and positions of the two particles are converted into
+%vector form.
+v1 = [particle1.speed*cosd(particle1.angle), particle1.speed*sind(particle1.angle)];
+v2 = [particle2.speed*cosd(particle2.angle), particle2.speed*sind(particle2.angle)];
 
-a1i = particle1.angle;
-a2i = particle2.angle;
+r1 = [particle1.xPos, particle1.yPos];
+r2 = [particle2.xPos, particle2.yPos];
 
-x1 = particle1.xPos;
-y1 = particle1.yPos;
-x2 = particle2.xPos;
-y2 = particle2.yPos;
+%The magnitudes of the differences between the particles' positions are
+%calculated, each to be used in the calculation of the final velocity for
+%each particle.
+r1r2diff = r1 - r2;
+r2r1diff = r2 - r1;
 
+r1r2mag = sqrt(r1r2diff(1)^2 + r1r2diff(2)^2);
+r2r1mag = sqrt(r2r1diff(1)^2 + r2r1diff(2)^2);
 
-%Contact angle of the two particles upon collision
-dx = x2 - x1;
-dy = y2 - y1;
+%The final velocity vectors of each particle are calculated, following 
+%the rules of an elastic collision.
+v1f = v1 - ((((2*m2)/(m1+m2)) * ((dot((v1 - v2), (r1 - r2))) / (r1r2mag^2))) * (r1-r2));
+v2f = v2 - ((((2*m1)/(m1+m2)) * ((dot((v2 - v1), (r2 - r1))) / (r2r1mag^2))) * (r2-r1));
 
-if dx == 0
-    
-    phi = 90;
-    
-else
-    
-    phi = atand(dy/dx);
-    
-end
+%The components of the final velocity vectors are then separated into
+%simpler variables in order to simplify further calculations.
+x1 = v1f(1);
+y1 = v1f(2);
+x2 = v2f(1);
+y2 = v2f(2);
 
+%The magnitudes of the velocity vectors for each particle are calculcated
+%here.
+v1fMag = sqrt(x1^2 + y1^2);
+v2fMag = sqrt(x2^2 + y2^2);
 
-%Final component velocities of the particles after elastic collision
-v1fx = (((v1 * cosd(a1i - phi) * (m1 - m2)) + (2 * m2 * v2 * cosd(a2i - phi))) / (m1 + m2)) * cosd(phi) + (v1 * sind(a1i - phi) * sind(phi));
-v1fy = (((v1 * cosd(a1i - phi) * (m1 - m2)) + (2 * m2 * v2 * cosd(a2i - phi))) / (m1 + m2)) * sind(phi) + (v1 * sind(a1i - phi) * cosd(phi));
-
-v2fx = (((v2 * cosd(a2i - phi) * (m2 - m1)) + (2 * m1 * v1 * cosd(a1i - phi))) / (m2 + m1)) * cosd(phi) + (v2 * sind(a2i - phi) * sind(phi));
-v2fy = (((v2 * cosd(a2i - phi) * (m2 - m1)) + (2 * m1 * v1 * cosd(a1i - phi))) / (m2 + m1)) * sind(phi) + (v2 * sind(a2i - phi) * cosd(phi));
-
-
-%Magnitude of velocity of each particle
-v1f = sqrt((v1fx^2) + (v1fy^2));
-v2f = sqrt((v2fx^2) + (v2fy^2));
-
-
-%Direction of velocity for each particle
-if v1fx < 0
-          
-    a1 = 180 + atand(v1fy/v1fx);
-
-elseif v1fx > 0 && v1fy >= 0
-
-    a1 = atand(v1fy/v1fx);
-
-elseif v1fx > 0 && v1fy < 0
-
-    a1 = 360 + atand(v1fy/v1fx);
-
-elseif v1fx == 0 && v1fy == 0
-
+%The direction of velocity for each particle is calculated here. Since the
+%inverse tangent function only gives a reference angle, the following
+%conditional statements are used to determine the actual angle on a
+%360-degree scale.
+if x1 > 0 && y1 == 0
     a1 = 0;
-
-elseif v1fx == 0 && v1fy >= 0
-
+    
+elseif x1 > 0 && y1 > 0
+    a1 = atand(y1/x1);
+    
+elseif x1 == 0 && y1 > 0
     a1 = 90;
-
-else
-
+    
+elseif x1 < 0 && y1 > 0
+    a1 = 180 - abs(atand(y1/x1));
+    
+elseif x1 < 0 && y1 == 0
+    a1 = 180;
+    
+elseif x1 < 0 && y1 < 0
+    a1 = 180 + abs(atand(y1/x1));
+    
+elseif x1 == 0 && y1 < 0
     a1 = 270;
-
+    
+elseif x1 > 0 && y1 < 0
+    a1 = 360 - abs(atand(y1/x1));
+    
 end
 
 
-if v2fx < 0
-          
-    a2 = 180 + atand(v2fy/v2fx);
-
-elseif v2fx > 0 && v2fy >= 0
-
-    a2 = atand(v2fy/v2fx);
-
-elseif v2fx > 0 && v2fy < 0
-
-    a2 = 360 + atand(v2fy/v2fx);
-
-elseif v2fx == 0 && v2fy == 0
-
+if x2 > 0 && y2 == 0
     a2 = 0;
-
-elseif v2fx == 0 && v2fy >= 0
-
+    
+elseif x2 > 0 && y2 > 0
+    a2 = atand(y2/x2);
+    
+elseif x2 == 0 && y2 > 0
     a2 = 90;
-
-else
-
+    
+elseif x2 < 0 && y2 > 0
+    a2 = 180 - abs(atand(y2/x2));
+    
+elseif x2 < 0 && y2 == 0
+    a2 = 180;
+    
+elseif x2 < 0 && y2 < 0
+    a2 = 180 + abs(atand(y2/x2));
+    
+elseif x2 == 0 && y2 < 0
     a2 = 270;
-
+    
+elseif x2 > 0 && y2 < 0
+    a2 = 360 - abs(atand(y2/x2));
+    
 end
 
-%The final speeds and angles are assigned to the output variables.
-finalParticle1.speed = v1f;
-finalParticle2.speed = v2f;
+%The final speeds and angles are assigned to their corresponding variables
+%inside the output structures.
+finalParticle1.speed = v1fMag;
+finalParticle2.speed = v2fMag;
 finalParticle1.angle = a1;
 finalParticle2.angle = a2;
