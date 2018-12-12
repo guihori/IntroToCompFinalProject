@@ -202,6 +202,10 @@ function handles = run(hObject, eventdata, handles)
                     handles.nextTimeStep = tTCol;
             end
         end
+        [tTCol, colWithinASecond] = timeToCollision(handles.particleList(end),0,"particleWall",handles.lower,handles.upper);
+        if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
+                handles.nextTimeStep = tTCol;
+        end
     else
         [tTCol, colWithinASecond] = timeToCollision(handles.particleList(2),0,"particleWall",handles.lower,handles.upper);
         if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
