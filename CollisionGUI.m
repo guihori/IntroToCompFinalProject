@@ -94,13 +94,14 @@ function AddParticle_Callback(hObject, eventdata, handles)
 x = inputdlg({'Mass of Particle:', 'Radius of Particle: (<20)'}, 'Create Particle');
 y = str2double(x);
 axis equal;
+if(noOverlapTest(y,handles.particleList)
 particle = createParticle(3*rand(1,1), rand(1,1)*360, y(2) + (100-2 * y(2)) * rand(1,1) , y(2) + (100-2 * y(2)) * rand(1,1) , y(2),y(1));
 hold on
 createCircle(particle.xPos, particle.yPos, particle.radius);
 hold off
 handles.particleList(end + 1) = particle;
 guidata(hObject, handles);
-
+end
 % --- Executes on button press in RemoveParticle.
 function RemoveParticle_Callback(hObject, eventdata, handles)
 % hObject    handle to RemoveParticle (see GCBO)
@@ -201,10 +202,6 @@ function handles = run(hObject, eventdata, handles)
             if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
                     handles.nextTimeStep = tTCol;
             end
-        end
-        [tTCol, colWithinASecond] = timeToCollision(handles.particleList(end),0,"particleWall",handles.lower,handles.upper);
-        if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
-                handles.nextTimeStep = tTCol;
         end
     else
         [tTCol, colWithinASecond] = timeToCollision(handles.particleList(2),0,"particleWall",handles.lower,handles.upper);
