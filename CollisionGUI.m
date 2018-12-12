@@ -65,9 +65,6 @@ plot(0:100, 0:100, '-w');
 axis equal;
 %Creates a variable called handles.particleList to store all the particles.
 handles.particleList = createParticle(0,0,0,0,0,0);
-handles.particleList(2) = createParticle(1, 10, 10, 80, 5, 1);
-handles.particleList(3) = createParticle(1, 350, 10, 20, 5, 1);
-
 handles.nextTimeStep = 1;
 handles.lower = 0.5;
 handles.upper = 99.5;
