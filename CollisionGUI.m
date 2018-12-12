@@ -62,6 +62,10 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 % Plots a white line to help with sizing issues.
 plot(0:100, 0:100, '-w');
+ax = gca;
+set(gca,'XTickLabel',[]);
+set(gca,'YTickLabel',[]);
+ax.TickLength = [0 0];
 axis equal;
 %Creates a variable called handles.particleList to store all the particles.
 handles.particleList = createParticle(0,0,0,0,0,0);
@@ -140,6 +144,10 @@ function StartStop_Callback(hObject, eventdata, handles)
         
         %plot and draw everything
         plot(0:100, 0:100, '-w',toPlotX', toPlotY');
+        ax = gca;
+        set(gca,'XTickLabel',[]);
+        set(gca,'YTickLabel',[]);
+        ax.TickLength = [0 0];
         drawnow
     end
     hObject.String = 'Check to Resume';
