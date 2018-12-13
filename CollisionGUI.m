@@ -102,7 +102,7 @@ function AddParticle_Callback(hObject, eventdata, handles)
     %While loop to make sure the data is valid.
     while y(2) > 20 || y(2) < 1 || y(1) <= 0
         waitfor(msgbox('Input a radius BETWEEN 1 and 20 and a non-negative, non-zero mass.'));
-        x = inputdlg({'Mass of Particle: (>0)', 'Radius of Particle: (1-15)'}, 'Create Particle');
+        x = inputdlg({'Mass of Particle: (>0)', 'Radius of Particle: (1-20)'}, 'Create Particle');
         y = str2double(x);
     end
     
@@ -121,7 +121,7 @@ function AddParticle_Callback(hObject, eventdata, handles)
     else
         hold on
         [plotX, plotY] = createCircle(particle.xPos, particle.yPos, particle.radius);
-        plot(plotX, plotY);
+        plot(plotX, plotY, '-b');
         hold off
 
         handles.particleList(end + 1) = particle;
@@ -174,7 +174,7 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     end
 
     %plot and draw everything
-    plot(0:100, 0:100, '-w',toPlotX', toPlotY');
+    plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
     ax = gca;
     set(gca,'XTickLabel',[]);
     set(gca,'YTickLabel',[]);
@@ -204,7 +204,8 @@ function StartStop_Callback(hObject, eventdata, handles)
         end
         
         %plot and draw everything
-        plot(0:100, 0:100, '-w',toPlotX', toPlotY');
+        
+        plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
         ax = gca;
         set(gca,'XTickLabel',[]);
         set(gca,'YTickLabel',[]);
