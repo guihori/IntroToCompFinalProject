@@ -67,11 +67,12 @@ function CollisionGUI_OpeningFcn(hObject, eventdata, handles, varargin)
     set(gca,'YTickLabel',[]);
     ax.TickLength = [0 0];
     axis square;
+    
     %Creates a variable called handles.particleList to store all the particles.
     handles.particleList = createParticle(0,0,0,0,0,0);
     handles.nextTimeStep = 1;
     handles.lower = 0.0000000000001;
-    handles.upper = 100-0.0000000000001;
+    handles.upper = 99.9999999999;
     guidata(hObject, handles);
 
 
@@ -94,28 +95,38 @@ function AddParticle_Callback(hObject, eventdata, handles)
         handles.StartStop.Value = 0;
         handles.StartStop.String = 'Check to Resume';
     end
-    x = inputdlg({'Mass of Particle:', 'Radius of Particle: (<15)'}, 'Create Particle');
+    %Gets initial input data to feed to the while loop.
+    x = inputdlg({'Mass of Particle: (>0)', 'Radius of Particle: (1-20)'}, 'Create Particle');
     y = str2double(x);
     
-    while y(2) > 15 || y(2) <= 0 || y(1) <= 0
-        waitfor(msgbox('Input a radius BETWEEN 0 and 15 and a non-negative, non-zero mass.'));
-        x = inputdlg({'Mass of Particle:', 'Radius of Particle: (<15)'}, 'Create Particle');
+    %While loop to make sure the data is valid.
+    while y(2) > 20 || y(2) < 1 || y(1) <= 0
+        waitfor(msgbox('Input a radius BETWEEN 1 and 20 and a non-negative, non-zero mass.'));
+        x = inputdlg({'Mass of Particle: (>0)', 'Radius of Particle: (1-15)'}, 'Create Particle');
         y = str2double(x);
     end
     
+    %createParticle(initial speed, initial angle, xPos, yPos, radius, mass)
     particle = createParticle(3*rand(1,1), rand(1,1)*360, y(2) + (100-2 * y(2)) * rand(1,1) , y(2) + (100-2 * y(2)) * rand(1,1) , y(2),y(1));
-    
-    while ~overlapTest(particle, handles.particleList)
+    counter = 0;
+    while ~overlapTest(particle, handles.particleList) && counter <= 100000
         particle = createParticle(3*rand(1,1), rand(1,1)*360, y(2) + (100-2 * y(2)) * rand(1,1) , y(2) + (100-2 * y(2)) * rand(1,1) , y(2),y(1));
+        counter = counter + 1;
     end
     
-    hold on
-    [plotX, plotY] = createCircle(particle.xPos, particle.yPos, particle.radius);
-    plot(plotX, plotY);
-    hold off
+    %To prevent an infinite loop of trying to place a particle that is too
+    %large.
+    if counter >= 100000
+        msgbox('Radius was too large, could not place the particle. Please try again.');
+    else
+        hold on
+        [plotX, plotY] = createCircle(particle.xPos, particle.yPos, particle.radius);
+        plot(plotX, plotY);
+        hold off
 
-    handles.particleList(end + 1) = particle;
-    guidata(hObject, handles);
+        handles.particleList(end + 1) = particle;
+        guidata(hObject, handles);
+    end
 
 % --- Executes on button press in RemoveParticle.
 function RemoveParticle_Callback(hObject, eventdata, handles)
@@ -126,12 +137,24 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
         handles.StartStop.Value = 0;
         handles.StartStop.String = 'Check to Resume';
     end
+    
+    %Prints the index of each circle inside the circle so user knows which
+    %index is being removed.
+    for i = 2:length(handles.particleList)
+        indNum = num2str(i- 1);
+        text(handles.particleList(i).xPos, handles.particleList(i).yPos, indNum);
+    end
+    
+    
     x = inputdlg('How many particles would you like to remove? To remove all: enter 0', 'Remove particles');
     y = str2double(x);
     indexes = zeros(1, y);
+    
+    %Removes all particles.
     if y == 0
         handles.particleList(2:end) = [];
         guidata(hObject, handles);
+    %Removes the particles at the index specified by the user.
     else
         for i = 1:y
             in = str2double(inputdlg('Particle index you would like to remove:', 'Removal'));
@@ -140,7 +163,9 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
         handles.particleList(indexes(:)) = [];
         guidata(hObject, handles);
     end
-     %calculate all circles
+    
+    %This code redraws everything before the simulation is resumed.
+    %calculate all circles
     toPlotX = zeros(length(handles.particleList),101);
     toPlotY = toPlotX;
     
@@ -187,6 +212,7 @@ function StartStop_Callback(hObject, eventdata, handles)
         axis square;
         drawnow
     end
+    
     hObject.String = 'Check to Resume';
     
 function handles = run(hObject, eventdata, handles) 
