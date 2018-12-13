@@ -61,7 +61,7 @@ function CollisionGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % UIWAIT makes CollisionGUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 % Plots a white line to help with sizing issues.
-    plot(0:100, 0:100, '-w');
+    %plot(0:100, 0:100, '-w');
     ax = gca;
     set(gca,'XTickLabel',[]);
     set(gca,'YTickLabel',[]);
@@ -70,8 +70,8 @@ function CollisionGUI_OpeningFcn(hObject, eventdata, handles, varargin)
     %Creates a variable called handles.particleList to store all the particles.
     handles.particleList = createParticle(0,0,0,0,0,0);
     handles.nextTimeStep = 1;
-    handles.lower = 0.0000000000001;
-    handles.upper = 100-0.0000000000001;
+    handles.lower = 2;
+    handles.upper = 98;
     guidata(hObject, handles);
 
 
@@ -92,15 +92,12 @@ function AddParticle_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     if get(handles.StartStop, 'Value') 
         handles.StartStop.Value = 0;
-        handles.StartStop.String = 'Check to Resume';
+        handles.StartStop.String = 'Check to resume');
     end
-    x = inputdlg({'Mass of Particle:', 'Radius of Particle: (<15)'}, 'Create Particle');
+    x = inputdlg({'Mass of Particle:', 'Radius of Particle: (<20)'}, 'Create Particle');
     y = str2double(x);
-    
-    while y(2) > 15 || y(2) <= 0 || y(1) <= 0
-        waitfor(msgbox('Input a radius BETWEEN 0 and 15 and a non-negative, non-zero mass.'));
-        x = inputdlg({'Mass of Particle:', 'Radius of Particle: (<15)'}, 'Create Particle');
-        y = str2double(x);
+    if y(2) > 20
+        y(2) = 20;
     end
     
     particle = createParticle(3*rand(1,1), rand(1,1)*360, y(2) + (100-2 * y(2)) * rand(1,1) , y(2) + (100-2 * y(2)) * rand(1,1) , y(2),y(1));
@@ -110,12 +107,12 @@ function AddParticle_Callback(hObject, eventdata, handles)
     end
     
     hold on
-    [plotX, plotY] = createCircle(particle.xPos, particle.yPos, particle.radius);
-    plot(plotX, plotY);
+    createCircle(particle.xPos, particle.yPos, particle.radius);
     hold off
-
+    drawnow update
     handles.particleList(end + 1) = particle;
     guidata(hObject, handles);
+    handles.StartStop.Value = 1;
 
 % --- Executes on button press in RemoveParticle.
 function RemoveParticle_Callback(hObject, eventdata, handles)
@@ -124,7 +121,7 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     if get(handles.StartStop, 'Value')
         handles.StartStop.Value = 0;
-        handles.StartStop.String = 'Check to Resume';
+        handles.StartStop.Value
     end
     x = inputdlg('How many particles would you like to remove? To remove all: enter 0', 'Remove particles');
     y = str2double(x);
@@ -140,22 +137,6 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
         handles.particleList(indexes(:)) = [];
         guidata(hObject, handles);
     end
-     %calculate all circles
-    toPlotX = zeros(length(handles.particleList),101);
-    toPlotY = toPlotX;
-    
-    for i = 2:length(handles.particleList)
-        [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
-    end
-
-    %plot and draw everything
-    plot(0:100, 0:100, '-w',toPlotX', toPlotY');
-    ax = gca;
-    set(gca,'XTickLabel',[]);
-    set(gca,'YTickLabel',[]);
-    ax.TickLength = [0 0];
-    axis square;
-    drawnow
     
 % --- Executes on button press in StartStop.
 function StartStop_Callback(hObject, eventdata, handles)
