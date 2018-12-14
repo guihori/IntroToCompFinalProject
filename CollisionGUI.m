@@ -121,7 +121,7 @@ function AddParticle_Callback(hObject, eventdata, handles)
     else
         hold on
         [plotX, plotY] = createCircle(particle.xPos, particle.yPos, particle.radius);
-        plot(plotX, plotY, '-b');
+        plot(plotX, plotY);
         hold off
 
         handles.particleList(end + 1) = particle;
@@ -179,11 +179,11 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     toPlotY = toPlotX;
     
     for i = 2:length(handles.particleList)
-        [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+        [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
     end
 
     %plot and draw everything
-    plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
+    plot(0:100, 0:100, '-w',toPlotX', toPlotY');
     ax = gca;
     set(gca,'XTickLabel',[]);
     set(gca,'YTickLabel',[]);
@@ -209,12 +209,12 @@ function StartStop_Callback(hObject, eventdata, handles)
             toPlotX = zeros(length(handles.particleList),101);
             toPlotY = toPlotX;
             for i = 2:length(handles.particleList)
-                [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+                [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
             end
 
             %plot and draw everything
 
-            plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
+            plot(0:100, 0:100, '-w',toPlotX', toPlotY');
             ax = gca;
             set(gca,'XTickLabel',[]);
             set(gca,'YTickLabel',[]);
