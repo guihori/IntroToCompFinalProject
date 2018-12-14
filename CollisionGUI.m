@@ -100,8 +100,8 @@ function AddParticle_Callback(hObject, eventdata, handles)
     y = str2double(x);
     
     %While loop to make sure the data is valid.
-    while y(2) > 20 || y(2) < 1 || y(1) <= 0
-        waitfor(msgbox('Input a radius BETWEEN 1 and 20 and a non-negative, non-zero mass.'));
+    while isnan(y(1)) || isnan(y(2)) || y(2) > 20 || y(2) < 1 || y(1) <= 0 
+        waitfor(msgbox('Invalid input. Radius must be between 1 and 20 and mass must be positive and nonzero.'));
         x = inputdlg({'Mass of Particle: (>0)', 'Radius of Particle: (1-20)'}, 'Create Particle');
         y = str2double(x);
     end
@@ -191,27 +191,30 @@ function StartStop_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of StartStop
     while get(hObject, 'Value')
         hObject.String = 'Uncheck to Pause';
-        
-        %updates while box is checked
-        run(hObject, eventdata, handles);
-        handles = guidata(hObject);
-        
-        %calculate all circles
-        toPlotX = zeros(length(handles.particleList),101);
-        toPlotY = toPlotX;
-        for i = 2:length(handles.particleList)
-            [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+        if length(handles.particleList) ~= 1
+            %updates while box is checked
+            run(hObject, eventdata, handles);
+            handles = guidata(hObject);
+
+            %calculate all circles
+            toPlotX = zeros(length(handles.particleList),101);
+            toPlotY = toPlotX;
+            for i = 2:length(handles.particleList)
+                [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+            end
+
+            %plot and draw everything
+
+            plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
+            ax = gca;
+            set(gca,'XTickLabel',[]);
+            set(gca,'YTickLabel',[]);
+            ax.TickLength = [0 0];
+            axis square;
+            drawnow
+        else
+            hObject.Value = 0;
         end
-        
-        %plot and draw everything
-        
-        plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
-        ax = gca;
-        set(gca,'XTickLabel',[]);
-        set(gca,'YTickLabel',[]);
-        ax.TickLength = [0 0];
-        axis square;
-        drawnow
     end
     
     hObject.String = 'Check to Resume';
