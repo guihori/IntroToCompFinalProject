@@ -159,6 +159,7 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     if y == 0
         handles.particleList(2:end) = [];
         guidata(hObject, handles);
+        
     %Removes the particles at the index specified by the user.
     elseif y < length(handles.particleList)-1;
         indexes = zeros(1, y);
@@ -175,15 +176,19 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     
     %This code redraws everything before the simulation is resumed.
     %calculate all circles
-    toPlotX = zeros(length(handles.particleList),101);
-    toPlotY = toPlotX;
+    toPlotX = zeros(length(handles.particleList),101),
+    toPlotY = toPlotX,
     
-    for i = 2:length(handles.particleList)
-        [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+    if length(handles.particleList) ~= 1
+        for i = 2:length(handles.particleList)
+            [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius),
+        end
+        %plot and draw everything
+        plot(0:100, 0:100, '-w',toPlotX', toPlotY');
+    else
+        plot(0:100, 0:100, '-w');
     end
-
-    %plot and draw everything
-    plot(0:100, 0:100, '-w',toPlotX', toPlotY');
+       
     ax = gca;
     set(gca,'XTickLabel',[]);
     set(gca,'YTickLabel',[]);
@@ -274,20 +279,22 @@ function handles = run(hObject, eventdata, handles)
                 end
             end
             [tTCol, colWithinASecond] = timeToCollision(handles.particleList(i),0,"particleWall",handles.lower,handles.upper);
-            if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
+            if colWithinASecond && tTCol < handles.nextTimeStep
                     handles.nextTimeStep = tTCol;
             end
         end
         [tTCol, colWithinASecond] = timeToCollision(handles.particleList(end),0,"particleWall",handles.lower,handles.upper);
-        if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
+        if colWithinASecond && tTCol < handles.nextTimeStep
                 handles.nextTimeStep = tTCol;
         end
     else
         [tTCol, colWithinASecond] = timeToCollision(handles.particleList(2),0,"particleWall",handles.lower,handles.upper);
-        if colWithinASecond && tTCol < handles.nextTimeStep && tTCol ~= 0
+        if colWithinASecond && tTCol < handles.nextTimeStep
                     handles.nextTimeStep = tTCol;
         end
     end
+    
+    
     
     %update position of particles
     for i = 2:length(handles.particleList)
