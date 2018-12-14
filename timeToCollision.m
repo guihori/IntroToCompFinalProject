@@ -18,6 +18,7 @@ function time = timeToCollision (particle1,particle2,typeOfCollision,lower,upper
 %time --> Time until the particle collides with the other particle or wall.
 %         Warning: time can be evaluated to imaginary numbers if collision
 %         between two particles never happen. 
+%         Warning: time can be negative
 
 %Particle particle collisions
 if typeOfCollision

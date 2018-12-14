@@ -309,15 +309,15 @@ function handles = run(hObject, eventdata, handles)
                 %is smaller than the next planned step that the simulation
                 %will take, set the next step to tTCol.
                 %See handles.nextTimeStep declaration for more information.
-                if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
-                    handles.nextTimeStep = tTCol;
+                if isreal(tTCol)
+                    if tTCol > 0 && tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
+                        handles.nextTimeStep = tTCol;
+                    end
                 end
             end
             tTCol = timeToCollision(handles.particleList(i),0,false,handles.lower,handles.upper);
-            if isreal(tTcol)
-                if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
-                        handles.nextTimeStep = tTCol;
-                end
+            if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
+                    handles.nextTimeStep = tTCol;
             end
         end
         tTCol = timeToCollision(handles.particleList(end),0,false,handles.lower,handles.upper);
