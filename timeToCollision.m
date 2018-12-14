@@ -1,7 +1,29 @@
-function [time,boolWithinASecond] = timeToCollision (particle1,particle2,typeOfCollision,lower,upper)
-%finds time to collision and outputs a boolean if time is smaller than one
-%and real.
-if strcmp(typeOfCollision, "particleParticle")
+function time = timeToCollision (particle1,particle2,typeOfCollision,lower,upper)
+%Finds time for a particle to hit another particle or wall
+
+%Inputs:
+%particle1 --> A particle structure
+%particle2 --> A particle structure. Only required for particle particle
+%              collisions
+%typeOfCollision --> Describes if the collision happens between another
+%                    particle or wall
+%                    true --> Particle particle collision
+%                    false --> Particle wall collision
+%lower --> The lower bounds of the simulation. Only required for particle
+%          wall collisions
+%upper --> The upper bounds of the simulation. Only required for particle
+%          wall collisions
+
+%Outputs:
+%time --> Time until the particle collides with the other particle or wall.
+%         Warning: time can be evaluated to imaginary numbers if collision
+%         between two particles never happen. 
+%         Warning: time can be negative
+
+%Particle particle collisions
+if typeOfCollision
+    %Formula for finding the time until two particles hit each other.
+    %Read readme file for explanation
     time = (-sqrt((2 * particle1.xPos * particle1.speed * cosd(particle1.angle)...
             - 2 * particle1.xPos * particle2.speed * cosd(particle2.angle) - 2 * particle2.xPos...
             * particle1.speed * cosd(particle1.angle) + 2 * particle2.xPos * particle2.speed...
@@ -26,14 +48,8 @@ if strcmp(typeOfCollision, "particleParticle")
             * cosd(particle2.angle) + particle1.speed^2 * sind(particle1.angle)^2 + particle1.speed^2 ...
             * cosd(particle1.angle)^2 + particle2.speed^2 * sind(particle2.angle)^2 + particle2.speed^2 ...
             * cosd(particle2.angle)^2));
-
-     if time >= 0 && time < 1 && isreal(time)
-         boolWithinASecond = true;
-     else
-         boolWithinASecond = false;
-     end
-     
-elseif strcmp(typeOfCollision,"particleWall")
+    
+else
     time = 1;
     
     %time to hit left wall. x = 0
@@ -45,23 +61,19 @@ elseif strcmp(typeOfCollision,"particleWall")
     %time to hit top wall. y = 100
     time4 = (upper - particle1.radius - particle1.yPos) / (sind(particle1.angle) * particle1.speed);
     
-    if time1 > 0 && time1 < 1
+    
+    %picks the smallest time that is greater than 0
+    if time1 > 0
         time = time1;
     end
-    if time2 > 0 && time2 < 1 && time2 < time
+    if time2 > 0 && time2 < time
         time = time2;
     end
-    if time3 > 0 && time3 < 1 && time3 < time
+    if time3 > 0 && time3 < time
         time = time3;
     end
-    if time4 > 0 && time4 < 1 && time4 < time
+    if time4 > 0 && time4 < time
         time = time4;
-    end
-    
-    if time < 1
-        boolWithinASecond = true;
-    else
-        boolWithinASecond = false;
     end
         
 end
