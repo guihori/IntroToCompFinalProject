@@ -100,8 +100,8 @@ function AddParticle_Callback(hObject, eventdata, handles)
     y = str2double(x);
     
     %While loop to make sure the data is valid.
-    while y(2) > 20 || y(2) < 1 || y(1) <= 0
-        waitfor(msgbox('Input a radius BETWEEN 1 and 20 and a non-negative, non-zero mass.'));
+    while isnan(y(1)) || isnan(y(2)) || y(2) > 20 || y(2) < 1 || y(1) <= 0 
+        waitfor(msgbox('Invalid input. Radius must be between 1 and 20 and mass must be positive and nonzero.'));
         x = inputdlg({'Mass of Particle: (>0)', 'Radius of Particle: (1-20)'}, 'Create Particle');
         y = str2double(x);
     end
@@ -121,7 +121,7 @@ function AddParticle_Callback(hObject, eventdata, handles)
     else
         hold on
         [plotX, plotY] = createCircle(particle.xPos, particle.yPos, particle.radius);
-        plot(plotX, plotY, '-b');
+        plot(plotX, plotY);
         hold off
 
         handles.particleList(end + 1) = particle;
@@ -148,20 +148,29 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     
     x = inputdlg('How many particles would you like to remove? To remove all: enter 0', 'Remove particles');
     y = str2double(x);
-    indexes = zeros(1, y);
+    
+    %If the input is greaterequal to the number of particles, this
+    %all the particles get removed also.
+    if y == length(handles.particleList) - 1
+        y = 0;
+    end
     
     %Removes all particles.
     if y == 0
         handles.particleList(2:end) = [];
         guidata(hObject, handles);
     %Removes the particles at the index specified by the user.
-    else
+    elseif y < length(handles.particleList)-1;
+        indexes = zeros(1, y);
         for i = 1:y
             in = str2double(inputdlg('Particle index you would like to remove:', 'Removal'));
             indexes(i) = in + 1;
         end
         handles.particleList(indexes(:)) = [];
         guidata(hObject, handles);
+    else
+        waitfor(msgbox('There are not enough particles.'));
+        handles.StartStop.Value = 1;
     end
     
     %This code redraws everything before the simulation is resumed.
@@ -170,11 +179,11 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     toPlotY = toPlotX;
     
     for i = 2:length(handles.particleList)
-        [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+        [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
     end
 
     %plot and draw everything
-    plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
+    plot(0:100, 0:100, '-w',toPlotX', toPlotY');
     ax = gca;
     set(gca,'XTickLabel',[]);
     set(gca,'YTickLabel',[]);
@@ -191,27 +200,30 @@ function StartStop_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of StartStop
     while get(hObject, 'Value')
         hObject.String = 'Uncheck to Pause';
-        
-        %updates while box is checked
-        run(hObject, eventdata, handles);
-        handles = guidata(hObject);
-        
-        %calculate all circles
-        toPlotX = zeros(length(handles.particleList),101);
-        toPlotY = toPlotX;
-        for i = 2:length(handles.particleList)
-            [toPlotX(i,:),toPlotY(i,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+        if length(handles.particleList) ~= 1
+            %updates while box is checked
+            run(hObject, eventdata, handles);
+            handles = guidata(hObject);
+
+            %calculate all circles
+            toPlotX = zeros(length(handles.particleList),101);
+            toPlotY = toPlotX;
+            for i = 2:length(handles.particleList)
+                [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
+            end
+
+            %plot and draw everything
+
+            plot(0:100, 0:100, '-w',toPlotX', toPlotY');
+            ax = gca;
+            set(gca,'XTickLabel',[]);
+            set(gca,'YTickLabel',[]);
+            ax.TickLength = [0 0];
+            axis square;
+            drawnow
+        else
+            hObject.Value = 0;
         end
-        
-        %plot and draw everything
-        
-        plot(0:100, 0:100, '-w',toPlotX', toPlotY', '-b');
-        ax = gca;
-        set(gca,'XTickLabel',[]);
-        set(gca,'YTickLabel',[]);
-        ax.TickLength = [0 0];
-        axis square;
-        drawnow
     end
     
     hObject.String = 'Check to Resume';
