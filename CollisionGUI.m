@@ -148,20 +148,29 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     
     x = inputdlg('How many particles would you like to remove? To remove all: enter 0', 'Remove particles');
     y = str2double(x);
-    indexes = zeros(1, y);
+    
+    %If the input is greaterequal to the number of particles, this
+    %all the particles get removed also.
+    if y == length(handles.particleList) - 1
+        y = 0;
+    end
     
     %Removes all particles.
     if y == 0
         handles.particleList(2:end) = [];
         guidata(hObject, handles);
     %Removes the particles at the index specified by the user.
-    else
+    elseif y < length(handles.particleList)-1;
+        indexes = zeros(1, y);
         for i = 1:y
             in = str2double(inputdlg('Particle index you would like to remove:', 'Removal'));
             indexes(i) = in + 1;
         end
         handles.particleList(indexes(:)) = [];
         guidata(hObject, handles);
+    else
+        waitfor(msgbox('There are not enough particles.'));
+        handles.StartStop.Value = 1;
     end
     
     %This code redraws everything before the simulation is resumed.
