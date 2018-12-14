@@ -70,7 +70,30 @@ function CollisionGUI_OpeningFcn(hObject, eventdata, handles, varargin)
     
     %Creates a variable called handles.particleList to store all the particles.
     handles.particleList = createParticle(0,0,0,0,0,0);
+    
+    %Use the following space and template to create new particles at will
+    %handles.particleList(end + 1) = createParticle(speed, angle(degrees), 
+    %x position, y position, radius, mass); 
+    
+    
+    
+    
+    %nextTimeStep is used so to prevent clipping in the simulation.
+    %Normally every time the simulation update the position of the
+    %particles there is a chance for two particles to clip. Clips reduce
+    %the accuracy of the simulation and in extreme cases can cause
+    %particles to go through each other. To prevent that we introduce
+    %variable time steps to our simulation. Variable time step allows us to
+    %find the time (accurate to 1e-14 seconds) when two particles collide
+    %and advandce the simulation to that time. The consequences of having a
+    %variable time step are the extreme precision of the simulation and a
+    %heavy dilation of time when too many collisions happen within a
+    %second
     handles.nextTimeStep = 1;
+    
+    %Set the bounds of the field to be slightly smaller than the field
+    %itself to prevent the particles to going over the field bounds and
+    %messing the zoom.
     handles.lower = 0.0000000000001;
     handles.upper = 99.9999999999;
     guidata(hObject, handles);
@@ -161,7 +184,7 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
         guidata(hObject, handles);
         
     %Removes the particles at the index specified by the user.
-    elseif y < length(handles.particleList)-1;
+    elseif y < length(handles.particleList)-1
         indexes = zeros(1, y);
         for i = 1:y
             in = str2double(inputdlg('Particle index you would like to remove:', 'Removal'));
@@ -176,12 +199,12 @@ function RemoveParticle_Callback(hObject, eventdata, handles)
     
     %This code redraws everything before the simulation is resumed.
     %calculate all circles
-    toPlotX = zeros(length(handles.particleList),101),
-    toPlotY = toPlotX,
+    toPlotX = zeros(length(handles.particleList),101);
+    toPlotY = toPlotX;
     
     if length(handles.particleList) ~= 1
         for i = 2:length(handles.particleList)
-            [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius),
+            [toPlotX(i-1,:),toPlotY(i-1,:)] = createCircle(handles.particleList(i).xPos,handles.particleList(i).yPos,handles.particleList(i).radius);
         end
         %plot and draw everything
         plot(0:100, 0:100, '-w',toPlotX', toPlotY');
@@ -268,33 +291,45 @@ function handles = run(hObject, eventdata, handles)
     if(length(handles.particleList)>2)
         for i = 2:length(handles.particleList)-1
             for j =i+1:length(handles.particleList)
-                
+                %Test if there is a collision between two particles
                 if collisionTest(handles.particleList(i),handles.particleList(j))
                     [handles.particleList(i), handles.particleList(j)] = collision(handles.particleList(i), handles.particleList(j));
                 end
-                
-                [tTCol, colWithinASecond] = timeToCollision(handles.particleList(i),handles.particleList(j),"particleParticle");
-                if colWithinASecond && tTCol < handles.nextTimeStep
+            end
+        end
+    end
+        
+    %Find the time until particles hit walls or other particles
+    if(length(handles.particleList)>2)
+        for i = 2:length(handles.particleList)-1
+            for j =i+1:length(handles.particleList)
+                %This will find the time until two particles colide (tTCol)
+                tTCol = timeToCollision(handles.particleList(i),handles.particleList(j),true);
+                %If a collision will happen within a second and the tTCol
+                %is smaller than the next planned step that the simulation
+                %will take, set the next step to tTCol.
+                %See handles.nextTimeStep declaration for more information.
+                if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
                     handles.nextTimeStep = tTCol;
                 end
             end
-            [tTCol, colWithinASecond] = timeToCollision(handles.particleList(i),0,"particleWall",handles.lower,handles.upper);
-            if colWithinASecond && tTCol < handles.nextTimeStep
-                    handles.nextTimeStep = tTCol;
+            tTCol = timeToCollision(handles.particleList(i),0,false,handles.lower,handles.upper);
+            if isreal(tTcol)
+                if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
+                        handles.nextTimeStep = tTCol;
+                end
             end
         end
-        [tTCol, colWithinASecond] = timeToCollision(handles.particleList(end),0,"particleWall",handles.lower,handles.upper);
-        if colWithinASecond && tTCol < handles.nextTimeStep
+        tTCol = timeToCollision(handles.particleList(end),0,false,handles.lower,handles.upper);
+        if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
                 handles.nextTimeStep = tTCol;
         end
     else
-        [tTCol, colWithinASecond] = timeToCollision(handles.particleList(2),0,"particleWall",handles.lower,handles.upper);
-        if colWithinASecond && tTCol < handles.nextTimeStep
+        tTCol = timeToCollision(handles.particleList(2),0,false,handles.lower,handles.upper);
+        if tTCol < 1 && tTCol < handles.nextTimeStep && tTCol
                     handles.nextTimeStep = tTCol;
         end
     end
-    
-    
     
     %update position of particles
     for i = 2:length(handles.particleList)
