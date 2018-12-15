@@ -1,30 +1,28 @@
 # IntroToCompFinalProject
 
-The purpose of this projcect is to simulate particles and elastic collisions in a 2D environment.
+Particle Simulator: Elastic Collisions in Two Dimensions
 
-Currently this program is able to display the particles and move them. Collision between particles is not implemented.
-
----------------------------------------------------------------------------------------------------------------------
+The purpose of this project is to simulate elastic collisions between particles in a closed two-dimensional environment.
 
 ---------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------
 
-goal list
+Goal List
 - [x] Create structures for particles
-- [x] Display the particles through a plot
+- [x] Display the particles on a plot
 - [x] Update particles through an update method
 - [x] Create bounds for our field
 - [x] Implement physics for the collision between two particles
 - [x] Create a full GUI for the simulation
 - [x] Create one click button to create new particles
-- [x] Create one click buton to remove particles
-
-
-
+- [x] Create one click button to remove particles
 
 ---------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------
 
-Explanation on how to find time for two distinct particles to hit each other. Each particle has properties: x and y position, speed, andgle(degrees), and radius
+Explanation on how to find the time it takes until two particles collide:
+
+Each particle has the following properties: x-coordinate, y-coordinate, speed, angle (degrees), radius
 
 -
 
@@ -40,12 +38,11 @@ time:			t(Unknown)
 
 -
 
-hit happens at
+hit happens at:
 sqrt( (Fx1-Fx2)^2 + (Fy1-Fy2)^2 ) = r1 + r2
 
--
 
-final pos
+final position:
 x1 + cos(a1) * s1 * t = Fx1
 
 y1 + sin(a1) * s1 * t = Fy1
@@ -54,13 +51,13 @@ x2 + cos(a2) * s2 * t = Fx2
 
 y2 + sin(a2) * s2 * t = Fy2
 
--
 
-replacing
+substitute the values:
 sqrt( ( x1 + cos(a1) * s1 * t - (x2 + cos(a2) * s2 * t) )^2 + (y1 + sin(a1) * s1 * t - (y2 + sin(a2) * s2 * t) )^2 ) = r1 + r2
 
-solving for t
+
+solve for t:
 t = (-sqrt((2 x1 s1 cos(a1) - 2 x1 s2 cos(a2) - 2 x2 s1 cos(a1) + 2 x2 s2 cos(a2) + 2 y1 s1 sin(a1) - 2 y1 s2 sin(a2) - 2 y2 s1 sin(a1) + 2 y2 s2 sin(a2))^2 - 4 (x1^2 - 2 x1 x2 + x2^2 + y1^2 - 2 y1 y2 + y2^2 - r1^2 - 2 r1 r2 - r2^2) (-2 s1 s2 sin(a1) sin(a2) - 2 s1 s2 cos(a1) cos(a2) + s1^2 sin^2(a1) + s1^2 cos^2(a1) + s2^2 sin^2(a2) + s2^2 cos^2(a2))) - 2 x1 s1 cos(a1) + 2 x1 s2 cos(a2) + 2 x2 s1 cos(a1) - 2 x2 s2 cos(a2) - 2 y1 s1 sin(a1) + 2 y1 s2 sin(a2) + 2 y2 s1 sin(a1) - 2 y2 s2 sin(a2))/(2 (-2 s1 s2 sin(a1) sin(a2) - 2 s1 s2 cos(a1) cos(a2) + s1^2 sin^2(a1) + s1^2 cos^2(a1) + s2^2 sin^2(a2) + s2^2 cos^2(a2)))
 t = (sqrt((2 x1 s1 cos(a1) - 2 x1 s2 cos(a2) - 2 x2 s1 cos(a1) + 2 x2 s2 cos(a2) + 2 y1 s1 sin(a1) - 2 y1 s2 sin(a2) - 2 y2 s1 sin(a1) + 2 y2 s2 sin(a2))^2 - 4 (x1^2 - 2 x1 x2 + x2^2 + y1^2 - 2 y1 y2 + y2^2 - r1^2 - 2 r1 r2 - r2^2) (-2 s1 s2 sin(a1) sin(a2) - 2 s1 s2 cos(a1) cos(a2) + s1^2 sin^2(a1) + s1^2 cos^2(a1) + s2^2 sin^2(a2) + s2^2 cos^2(a2))) - 2 x1 s1 cos(a1) + 2 x1 s2 cos(a2) + 2 x2 s1 cos(a1) - 2 x2 s2 cos(a2) - 2 y1 s1 sin(a1) + 2 y1 s2 sin(a2) + 2 y2 s1 sin(a1) - 2 y2 s2 sin(a2))/(2 (-2 s1 s2 sin(a1) sin(a2) - 2 s1 s2 cos(a1) cos(a2) + s1^2 sin^2(a1) + s1^2 cos^2(a1) + s2^2 sin^2(a2) + s2^2 cos^2(a2)))
 
-because time must be positive we only care about the positive solution
+Because time can only be positive, we only care about the positive solution.
